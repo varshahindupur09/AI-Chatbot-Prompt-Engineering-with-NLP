@@ -1,0 +1,118 @@
+create table menu_items (
+    item_id integer primary key,
+    category varchar(50),
+    name varchar(100),
+    description varchar(225),
+    size varchar(20),
+    pice decimal(5,2)
+);
+
+create table order_details (
+    order_id integer,
+    item_id integer,
+    quantity integer,
+    price_per_item decimal(5,2)
+);
+
+create table orders (
+    customer_id integer,
+    order_id integer primary key,
+    order_date date,
+    order_time time
+);
+
+CREATE TABLE customers (
+    customer_id INTEGER PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    email VARCHAR(100),
+    phone VARCHAR(20),
+    address VARCHAR(255),
+    created_at DATE
+);
+
+CREATE TABLE menu_item_details (
+    item_id INTEGER PRIMARY KEY,  -- Using item_id to match with menu_items table
+    name VARCHAR(100),
+    category VARCHAR(50),
+    ingredients VARCHAR(255)
+);
+
+select * from menu_items;
+select * from order_details;
+drop table orders;
+select * from orders;
+
+SELECT * 
+FROM orders 
+NATURAL JOIN order_details 
+NATURAL JOIN menu_items;
+
+select CONCAT(category, ' - ', name) AS item_name,  size, sum(quantity) as total_quantity, sum(price_per_item * quantity) as total_price
+from order_details
+natural join menu_items
+group by item_name, size;
+
+-- ALTER TABLE orders ADD customer_id INTEGER;
+
+SELECT customer_id, CONCAT(category, ' - ', name) AS item_name, size, SUM(quantity) AS total_ordered
+FROM orders 
+NATURAL JOIN order_details 
+NATURAL JOIN menu_items
+GROUP BY customer_id, item_name, size;
+
+SELECT order_date, SUM(price_per_item * quantity) AS daily_revenue
+FROM orders 
+NATURAL JOIN order_details 
+NATURAL JOIN menu_items
+GROUP BY order_date
+ORDER BY order_date;
+
+SELECT category, SUM(price_per_item * quantity) AS category_sales
+FROM menu_items
+NATURAL JOIN order_details
+GROUP BY category;
+
+-- This can be useful when you want to perform operations that need to access columns from other tables or perform calculations that depend on each row.
+WITH calzone_sales AS (
+    SELECT 
+        mi.item_id,
+        mi.name AS calzone_name,
+        o.order_date,
+        SUM(od.quantity * od.price_per_item) AS total_sales
+    FROM 
+        menu_items mi
+    JOIN 
+        order_details od ON mi.item_id = od.item_id
+    JOIN 
+        orders o ON o.order_id = od.order_id
+    WHERE 
+        mi.category = 'Calzones'
+    GROUP BY 
+        mi.item_id, mi.name, o.order_date
+)
+SELECT 
+    cs.calzone_name,
+    max_sales.order_date,
+    max_sales.total_sales
+FROM 
+    calzone_sales cs
+JOIN LATERAL (
+    SELECT 
+        order_date,
+        total_sales
+    FROM 
+        calzone_sales cs_inner
+    WHERE 
+        cs_inner.item_id = cs.item_id
+    ORDER BY 
+        total_sales DESC
+    LIMIT 1
+) AS max_sales ON true
+ORDER BY 
+    cs.calzone_name, max_sales.order_date;
+
+
+
+
+
