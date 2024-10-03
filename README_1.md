@@ -13,3 +13,7 @@ By querying snowflake.account_usage.query_history, you're accessing the right vi
 
 
 ![image](https://github.com/user-attachments/assets/9f559fb1-ea50-4ece-b746-4a8784ac1ebe)
+
+
+
+
