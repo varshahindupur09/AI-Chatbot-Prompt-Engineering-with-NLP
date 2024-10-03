@@ -176,3 +176,10 @@ For more information, checkout my youtube video: https://youtu.be/hNW7EwDtSws
 
 ### Step 8: Contact
 For any questions or feedback, please contact me with the contact details given on my GITHUB repository.
+
+### Step 9: Snowflake Queries
+All the queries used and executed in Snowflake worksheet are mentioned in this file below:
+
+Link: [https://github.com/varshahindupur09/SnowflakeRestaurantAI/blob/main/snowflake_joins_queries.txt]
+
+I have used Lateral joins, Natural join for revenue generated for different food items like Pizzas, Calzones and even categories as well. 
